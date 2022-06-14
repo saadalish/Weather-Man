@@ -56,4 +56,3 @@ class Report:
         days = records[year][month]
         for day in days:
             Report.find_maximum_minimum_temperature_on_day(year, month, day[2], records)
-
