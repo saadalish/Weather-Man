@@ -11,7 +11,8 @@ class Reader:
             if self.header_row:
                 next(day)
             for record in day:
-                record = record.split(",")[0:10]
+                record = record.split(",")
+                record = record[:2] + [record[3]] + record[7:9]
                 self.weathers.append(record)
                 self.header_row = True
 
