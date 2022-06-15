@@ -10,7 +10,6 @@ class Reader:
 
     def read_weather_monthly_record(self, weather_monthly_record_file_path):
         with open(weather_monthly_record_file_path) as weather_monthly_record:
-
             try:
                 weather_daily_records = csv.DictReader(weather_monthly_record)
 
@@ -19,11 +18,13 @@ class Reader:
                         date = single_day_weather_record['PKT']
                     except KeyError:
                         date = single_day_weather_record['PKST']
-                    self.weather_records.append([date,
-                                                 single_day_weather_record['Max TemperatureC'],
-                                                 single_day_weather_record['Min TemperatureC'],
-                                                 single_day_weather_record['Max Humidity'],
-                                                 single_day_weather_record[' Mean Humidity']])
+                    self.weather_records.append([
+                        date,
+                        single_day_weather_record['Max TemperatureC'],
+                        single_day_weather_record['Min TemperatureC'],
+                        single_day_weather_record['Max Humidity'],
+                        single_day_weather_record[' Mean Humidity']
+                    ])
             except csv.Error as error:
                 sys.exit(f"File format not correct! File {weather_monthly_record_file_path}, "
                          f"line {weather_daily_records.line_num}: {error}")

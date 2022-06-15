@@ -1,5 +1,4 @@
 import calendar
-import sys
 
 
 class Computations:
@@ -26,15 +25,14 @@ class Computations:
                 weather_daily_records = weather_records[year][weather_monthly_records]
                 maximum_temperature_record_in_month = max(
                     weather_daily_records, key=lambda x: x[maximum_temperature]
-                    if x[maximum_temperature] is not None else float('-inf'))
+                    if x[maximum_temperature] is not None
+                    else float('-inf'))
 
                 if maximum_temperature_record_in_month[maximum_temperature] > maximum_temperature_in_year:
                     maximum_temperature_in_year = maximum_temperature_record_in_month[maximum_temperature]
                     maximum_temperature_record_in_year = maximum_temperature_record_in_month
-
         except KeyError:
-            sys.exit(f"Weather Record not exist for year: {year}")
-
+            print(f"Weather Record not exist for year: {year}")
         finally:
             maximum_temperature_month, maximum_temperature_day = Computations.get_month_and_day_from_date(
                 maximum_temperature_record_in_year[single_day_weather_record_date]
@@ -54,15 +52,14 @@ class Computations:
                 weather_daily_records = weather_records[year][weather_monthly_records]
                 minimum_temperature_record_in_month = min(
                     weather_daily_records, key=lambda x: x[minimum_temperature]
-                    if x[minimum_temperature] is not None else float('inf'))
+                    if x[minimum_temperature] is not None
+                    else float('inf'))
 
                 if minimum_temperature_record_in_month[minimum_temperature] < minimum_temperature_in_year:
                     minimum_temperature_in_year = minimum_temperature_record_in_month[minimum_temperature]
                     minimum_temperature_record_in_year = minimum_temperature_record_in_month
-
         except KeyError:
-            sys.exit(f"Weather Record not exist for year: {year}")
-
+            print(f"Weather Record not exist for year: {year}")
         finally:
             minimum_temperature_month, minimum_temperature_day = Computations.get_month_and_day_from_date(
                 minimum_temperature_record_in_year[single_day_weather_record_date]
@@ -82,15 +79,14 @@ class Computations:
                 weather_daily_records = weather_records[year][weather_monthly_records]
                 max_humidity_record_in_month = max(
                     weather_daily_records, key=lambda x: x[maximum_humidity]
-                    if x[maximum_humidity] is not None else float('-inf'))
+                    if x[maximum_humidity] is not None
+                    else float('-inf'))
 
                 if max_humidity_record_in_month[maximum_humidity] > max_humidity_in_year:
                     max_humidity_in_year = max_humidity_record_in_month[maximum_humidity]
                     max_humidity_record_in_year = max_humidity_record_in_month
-
         except KeyError:
-            sys.exit(f"Weather Record not exist for year: {year}")
-
+            print(f"Weather Record not exist for year: {year}")
         finally:
             max_humidity_month, max_humidity_day = Computations.get_month_and_day_from_date(
                 max_humidity_record_in_year[single_day_weather_record_date]
@@ -108,12 +104,15 @@ class Computations:
 
                 if single_day_record[maximum_temperature]:
                     average_highest_temperature_in_month += single_day_record[maximum_temperature]
-                average_highest_temperature_in_month = average_highest_temperature_in_month // len(weather_records[year][month])
-        except KeyError:
-            sys.exit(f"Weather Record not exist for {year} {calendar.month_name[month]}")
 
-        finally:
-            return average_highest_temperature_in_month
+            average_highest_temperature_in_month = (
+                    average_highest_temperature_in_month // len(weather_records[year][month])
+            )
+        except ZeroDivisionError:
+            print(f"No Weather Record exist for {year} {calendar.month_name[month]}")
+        except KeyError:
+            print(f"Weather Record not exist for {year} {calendar.month_name[month]}")
+        return average_highest_temperature_in_month
 
     @staticmethod
     def find_average_lowest_temperature_in_month(year, month, all_weather_records):
@@ -126,13 +125,14 @@ class Computations:
 
                 if single_day_record[minimum_temperature]:
                     average_lowest_temperature_in_month += single_day_record[minimum_temperature]
-                average_lowest_temperature_in_month = (average_lowest_temperature_in_month
-                                                       // len(weather_records[year][month]))
+            average_lowest_temperature_in_month = (
+                    average_lowest_temperature_in_month // len(weather_records[year][month])
+            )
+        except ZeroDivisionError:
+            print(f"No Weather Record exist for {year} {calendar.month_name[month]}")
         except KeyError:
-            sys.exit(f"Weather Record not exist for {year} {calendar.month_name[month]}")
-
-        finally:
-            return average_lowest_temperature_in_month
+            print(f"Weather Record not exist for {year} {calendar.month_name[month]}")
+        return average_lowest_temperature_in_month
 
     @staticmethod
     def find_average_mean_humidity_in_month(year, month, all_weather_records):
@@ -145,33 +145,31 @@ class Computations:
 
                 if single_day_record[mean_humidity]:
                     average_mean_humidity_in_year += single_day_record[mean_humidity]
-                average_mean_humidity_in_year = average_mean_humidity_in_year // len(weather_records[year][month])
+            average_mean_humidity_in_year = average_mean_humidity_in_year // len(weather_records[year][month])
+        except ZeroDivisionError:
+            print(f"No Weather Record exist for {year} {calendar.month_name[month]}")
         except KeyError:
-            sys.exit(f"Weather Record not exist for {year} {calendar.month_name[month]}")
-
-        finally:
-            return average_mean_humidity_in_year
+            print(f"Weather Record not exist for {year} {calendar.month_name[month]}")
+        return average_mean_humidity_in_year
 
     @staticmethod
     def find_maximum_temperature_on_day(year, month, day, all_weather_records):
         weather_attributes, weather_records = all_weather_records
         maximum_temperature = Computations.get_weather_attribute_index(weather_attributes, "Max TemperatureC")
-
+        maximum_temperature_on_day = float("-inf")
         try:
-            weather_records[year][month][day][maximum_temperature]
+            maximum_temperature_on_day = weather_records[year][month][day][maximum_temperature]
         except KeyError:
-            sys.exit(f"Weather Record not exist for {year} {calendar.month_name[month]} {day}")
-        finally:
-            return weather_records[year][month][day][maximum_temperature]
+            print(f"Weather Record not exist for {year} {calendar.month_name[month]} {day}")
+        return maximum_temperature_on_day
 
     @staticmethod
     def find_minimum_temperature_on_day(year, month, day, all_weather_records):
         weather_attributes, weather_records = all_weather_records
         minimum_temperature = Computations.get_weather_attribute_index(weather_attributes, "Min TemperatureC")
-
+        minimum_temperature_on_day = float("inf")
         try:
-            weather_records[year][month][day][minimum_temperature]
+            minimum_temperature_on_day = weather_records[year][month][day][minimum_temperature]
         except KeyError:
-            sys.exit(f"Weather Record not exist for {year} {calendar.month_name[month]} {day}")
-        finally:
-            return weather_records[year][month][day][minimum_temperature]
+            print(f"Weather Record not exist for {year} {calendar.month_name[month]} {day}")
+        return minimum_temperature_on_day

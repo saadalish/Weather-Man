@@ -1,6 +1,3 @@
-import sys
-
-
 class Parser:
 
     weather_records = {}
@@ -15,8 +12,10 @@ class Parser:
 
         for single_day_record in weather_records:
             if len(single_day_record) < len(self.weather_attributes.keys()):
-                raise IndexError(f"Index out of range for this weather record: "
-                                 f"{single_day_record} expecting {len(self.weather_attributes.keys())} attributes")
+                raise IndexError(
+                    f"Index out of range for this weather record: {single_day_record} "
+                    f"expecting {len(self.weather_attributes.keys())} attributes"
+                )
 
             try:
                 year, month, day = single_day_record[self.weather_attributes['PKT']].split("-")
@@ -29,9 +28,8 @@ class Parser:
                 if month not in self.weather_records[year].keys():
                     self.weather_records[year][month] = []
                 self.weather_records[year][month].append(single_day_record)
-
             except ValueError as error:
-                sys.exit("Desired weather attribute not found for this {single_day_record} weather record."
-                         " Details: {error}")
+                print(f"Desired weather attribute not found for this {single_day_record} weather record. "
+                      f"Details: {error}")
 
         return self.weather_attributes, self.weather_records

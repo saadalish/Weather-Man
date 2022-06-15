@@ -1,6 +1,5 @@
 import argparse
 import os
-import sys
 
 from reader import Reader
 from report import Report
@@ -8,9 +7,9 @@ from parser import Parser
 
 
 def validate_directory_path(directory_path):
-    if os.path.isdir(directory_path):
-        return directory_path
-    raise NotADirectoryError(directory_path)
+    if not os.path.isdir(directory_path):
+        raise NotADirectoryError(directory_path)
+    return directory_path
 
 
 def extract_year_and_month_from_argument(args):
@@ -18,10 +17,12 @@ def extract_year_and_month_from_argument(args):
     extracted_month = None
     try:
         extracted_year, extracted_month = args.split("/")
+        extracted_year = int(extracted_year)
+        extracted_month = int(extracted_month)
     except ValueError:
-        sys.exit(f"Invalid Input: {args}")
+        print(f"Invalid Input: {args}")
     finally:
-        return int(extracted_year), int(extracted_month)
+        return extracted_year, extracted_month
 
 
 if __name__ == '__main__':
