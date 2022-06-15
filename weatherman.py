@@ -1,20 +1,25 @@
 import argparse
 import os
+import sys
 
 from reader import Reader
 from report import Report
 from parser import Parser
 
 
-def validate_directory_path(path):
-    if os.path.isdir(path):
-        return path
+def validate_directory_path(directory_path):
+    if os.path.isdir(directory_path):
+        return directory_path
     else:
-        raise NotADirectoryError(path)
+        raise NotADirectoryError(directory_path)
 
 
-def extract_year_and_month_from_argument(arguments):
-    return int(arguments.split("/")[0]), int(arguments.split("/")[1])
+def extract_year_and_month_from_argument(args):
+    try:
+        extracted_year, extracted_month = args.split("/")
+        return int(extracted_year), int(extracted_month)
+    except ValueError:
+        sys.exit('Invalid Input: {}'.format(args))
 
 
 if __name__ == '__main__':
@@ -22,26 +27,25 @@ if __name__ == '__main__':
     parser.add_argument('-a', dest='a', type=str, help='monthly operation')
     parser.add_argument('-e', dest='e', type=int, help='yearly operation')
     parser.add_argument('-c', dest='c', type=str, help='monthly operation | generating reports')
-    parser.add_argument('directory', nargs='+', action='store')
-    args = parser.parse_args()
-    directory = validate_directory_path(args.directory[0])
+    parser.add_argument('directory', action='store')
+    arguments = parser.parse_args()
+    weather_files_directory_path = validate_directory_path(arguments.directory)
     reader = Reader()
-    data = reader.read_folder(directory)
+    raw_weather_records = reader.read_weather_yearly_record(weather_files_directory_path)
     parser = Parser()
-    data = parser.parsing_records_into_dictionaries(data)
-    report = Report()
-    if args.e:
-        report.generate_report_for_maximum_temperature_in_year(args.e, data)
-        report.generate_report_for_minimum_temperature_in_year(args.e, data)
-        report.generate_report_for_maximum_humidity_in_year(args.e, data)
+    parsed_weather_records = parser.parsing_weather_records_into_dictionary(raw_weather_records)
+    if arguments.e:
+        Report.generate_report_for_maximum_temperature_in_year(arguments.e, parsed_weather_records)
+        Report.generate_report_for_minimum_temperature_in_year(arguments.e, parsed_weather_records)
+        Report.generate_report_for_maximum_humidity_in_year(arguments.e, parsed_weather_records)
         print("\n")
-    if args.a:
-        year, month = extract_year_and_month_from_argument(args.a)
-        report.generate_report_for_average_highest_temperature_in_month(year, month, data)
-        report.generate_report_for_average_lowest_temperature_in_month(year, month, data)
-        report.generate_report_for_average_mean_humidity_in_month(year, month, data)
+    if arguments.a:
+        year, month = extract_year_and_month_from_argument(arguments.a)
+        Report.generate_report_for_average_highest_temperature_in_month(year, month, parsed_weather_records)
+        Report.generate_report_for_average_lowest_temperature_in_month(year, month, parsed_weather_records)
+        Report.generate_report_for_average_mean_humidity_in_month(year, month, parsed_weather_records)
         print("\n")
-    if args.c:
-        year, month = extract_year_and_month_from_argument(args.c)
-        report.generate_report_for_maximum_minimum_temperature_on_days_in_month(year, month, data)
+    if arguments.c:
+        year, month = extract_year_and_month_from_argument(arguments.c)
+        Report.generate_report_for_maximum_minimum_temperature_on_days_in_month(year, month, parsed_weather_records)
         print("\n")
