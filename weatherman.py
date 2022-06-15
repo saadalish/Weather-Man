@@ -10,16 +10,18 @@ from parser import Parser
 def validate_directory_path(directory_path):
     if os.path.isdir(directory_path):
         return directory_path
-    else:
-        raise NotADirectoryError(directory_path)
+    raise NotADirectoryError(directory_path)
 
 
 def extract_year_and_month_from_argument(args):
+    extracted_year = None
+    extracted_month = None
     try:
         extracted_year, extracted_month = args.split("/")
-        return int(extracted_year), int(extracted_month)
     except ValueError:
-        sys.exit('Invalid Input: {}'.format(args))
+        sys.exit(f"Invalid Input: {args}")
+    finally:
+        return int(extracted_year), int(extracted_month)
 
 
 if __name__ == '__main__':
@@ -31,8 +33,8 @@ if __name__ == '__main__':
     arguments = parser.parse_args()
     weather_files_directory_path = validate_directory_path(arguments.directory)
     reader = Reader()
-    raw_weather_records = reader.read_weather_yearly_record(weather_files_directory_path)
     parser = Parser()
+    raw_weather_records = reader.read_weather_yearly_record(weather_files_directory_path)
     parsed_weather_records = parser.parsing_weather_records_into_dictionary(raw_weather_records)
     if arguments.e:
         Report.generate_report_for_maximum_temperature_in_year(arguments.e, parsed_weather_records)
