@@ -1,5 +1,5 @@
 from scrapy.linkextractors import LinkExtractor
-from scrapy.linkextractors.lxmlhtml import *
+from scrapy.linkextractors.lxmlhtml import Link, operator, partial
 
 
 class CustomLinkExtractor(LinkExtractor):
