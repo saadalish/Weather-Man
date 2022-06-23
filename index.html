@@ -12,7 +12,7 @@
         <th>Details</th>
         <th>Source</th>
     </tr>
-    {% for product in products %}
+    {% for product in page_obj %}
         <tr>
             <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
             <td>{{ product.title }}</td>
