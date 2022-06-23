@@ -1,0 +1,45 @@
+{% load static %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'products/style.css' %}">
+{% if products %}
+    <h1>List of Products</h1>
+    <table>
+    <tr>
+        <th>S No.</th>
+        <th>Title</th>
+        <th>Category</th>
+        <th>Vendor</th>
+        <th>Details</th>
+        <th>Source</th>
+    </tr>
+    {% for product in products %}
+        <tr>
+            <td>{{ page_obj.start_index|add:forloop.counter0 }}</td>
+            <td>{{ product.title }}</td>
+            <td>{{ product.category }}</td>
+            <td>{{ product.vendor }}</td>
+            <td>{{ product.details }}</td>
+            <td><a href={{product.source}}>{{ product.source }}</a></td>
+        </tr>
+    {% endfor %}
+    </table>
+    <div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; first</a>
+            <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+        {% endif %}
+
+        <span class="current">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">next</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">last &raquo;</a>
+        {% endif %}
+    </span>
+</div>
+{% else %}
+    <p>No products are available.</p>
+{% endif %}
